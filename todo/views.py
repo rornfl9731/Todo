@@ -3,6 +3,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
 from todo.forms import PostForm
 from .models import Todo
 # Create your views here.
@@ -14,6 +15,11 @@ class TodoListView(ListView):
         ordering = self.request.GET.get('ordering', 'priority')
         # validate ordering here
         return ordering
+
+
+
+
+
 
 class TodoCreateView(CreateView):
     model = Todo
@@ -35,3 +41,4 @@ class TodoDeleteView(DeleteView):
 
 class TodoDetailView(DetailView):
     model = Todo
+

@@ -11,10 +11,12 @@
 <div class="btn-group">
         <a href="{% url 'add' %}" class="btn btn-info">todo 추가</a>
 
+
     </div>
     <p></p>
     <table class="table">
         <thead>
+
             <tr>
                 <th scope="col">우선순위</th>
                 <th scope="col">제목</th>
@@ -22,27 +24,33 @@
                 <th scope="col">마감</th>
                 <th scope="col">&nbsp;&nbsp;수정</th>
                 <th scope="col">&nbsp;&nbsp;삭제</th>
-                <th scope="col">&nbsp;&nbsp;완료</th>
+                <!--<th scope="col">&nbsp;&nbsp;완료</th>-->
             </tr>
         </thead>
         <tbody>
             {% for todo in object_list %}
                 <tr>
-
+                    <!--현재시간-->
+                    {% now "Y-m-d" as todays_date %}
 
                     <td>{{todo.priority}}</td>
 
                     <td>{{todo.title}}</a></td>
                     {% if todo.success == False %}
-                    <td><a href="{% url 'detail' pk=todo.id %}" >{{todo.content}}</a></td>
+                    <td><a href="{% url 'detail' pk=todo.id %}" >{{todo.content|truncatechars:10}}</a></td>
                     {% else %}
-                    <td><a href="{% url 'detail' pk=todo.id %}" ><strike>{{todo.content}}</strike></a></td>
+                    <td><a href="{% url 'detail' pk=todo.id %}" ><strike style="color: red">{{todo.content}}</strike></a></td>
                     {% endif %}
-                    <td>{{todo.due_date}}</a></td>
+                    {% if todays_date <= todo.due_date|date:"Y-m-d" %}
+                    <td>{{todo.due_date}}</td>
+                    {% else %}
+                    <td>지남</td>
+                    {% endif %}
+                    <!--<td>{{todo.due_date}}</a></td>-->
                     <td><a href="{% url 'update' pk=todo.id %}" class="btn btn-success btn-sm">수정</a></td>
                     <td><a href="{% url 'delete' pk=todo.id %}" class="btn btn-danger btn-sm">삭제</a></td>
 
-                    <td id="ss"><input type="button" class="btn btn-primary" value="완료" ></td>
+                    <!--<td id="ss"><input type="button" class="btn btn-primary" value="완료" ></td>-->
 
                 </tr>
             {% endfor %}
