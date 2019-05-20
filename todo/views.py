@@ -3,14 +3,14 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy
-from django.shortcuts import get_object_or_404
 from todo.forms import PostForm
 from .models import Todo
+import datetime
 # Create your views here.
 
 class TodoListView(ListView):
     model = Todo
-    paginate_by = 5
+    paginate_by = 10
 
     # def get_ordering(self):
     #     ordering = self.request.GET.get('ordering', 'priority')
@@ -19,6 +19,7 @@ class TodoListView(ListView):
 
     def get_queryset(self):
         return Todo.objects.order_by('priority')
+
 
 
 class TodoCreateView(CreateView):
@@ -47,7 +48,18 @@ def cross(request,pk):
     content = Todo.objects.get(pk=pk)
     content.success ^= True
     content.save()
+
     return redirect('list')
+
+
+class TodoSuccessListView(ListView):
+    model = Todo
+    paginate_by = 10
+    template_name_suffix = "_success_list"
+
+    def get_queryset(self):
+
+        return Todo.objects.filter(success = True)
 
 
 
