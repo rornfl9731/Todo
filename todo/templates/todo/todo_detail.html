@@ -9,7 +9,10 @@
 
 {% block content %}
 
-<h2>{{object.title}}</h2><br/>
-<p>내용 : {{object.content}}</p>
+<div class="jumbotron">
+    <h2 style="">{{object.title}}</h2><br/>
+내용 : <input style="width: 1000px" type="text" value="{{object.content}}" readonly></input>
 {% endblock %}
+</div>
+
 </body>

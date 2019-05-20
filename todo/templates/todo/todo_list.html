@@ -12,6 +12,7 @@
         <a href="{% url 'add' %}" class="btn btn-info">todo 추가</a>
 
 
+
     </div>
     <p></p>
     <table class="table">
@@ -21,10 +22,10 @@
                 <th scope="col">우선순위</th>
                 <th scope="col">제목</th>
                 <th scope="col">내용</th>
-                <th scope="col">마감</th>
+                <th scope="col">마감일</th>
                 <th scope="col">&nbsp;&nbsp;수정</th>
                 <th scope="col">&nbsp;&nbsp;삭제</th>
-                <!--<th scope="col">&nbsp;&nbsp;완료</th>-->
+                <th scope="col">&nbsp;&nbsp;완료</th>
             </tr>
         </thead>
         <tbody>
@@ -33,24 +34,38 @@
                     <!--현재시간-->
                     {% now "Y-m-d" as todays_date %}
 
-                    <td>{{todo.priority}}</td>
+                    <td style="text-align: center">{{todo.priority}}</td>
 
-                    <td>{{todo.title}}</a></td>
+                    <td>{{todo.title}}</td>
+
                     {% if todo.success == False %}
-                    <td><a href="{% url 'detail' pk=todo.id %}" >{{todo.content|truncatechars:10}}</a></td>
+                    <td><a href="{% url 'detail' pk=todo.id %}" >{{todo.content|truncatechars:30}}</a></td>
                     {% else %}
-                    <td><a href="{% url 'detail' pk=todo.id %}" ><strike style="color: red">{{todo.content}}</strike></a></td>
+                    <td class="striker"><a href="{% url 'detail' pk=todo.id %}" style="color: red;">{{todo.content}}</a></td>
                     {% endif %}
+
+
                     {% if todays_date <= todo.due_date|date:"Y-m-d" %}
                     <td>{{todo.due_date}}</td>
+                    {% elif todo.due_date == None %}
+                    <td>-</td>
                     {% else %}
-                    <td>지남</td>
+                    <td>마감</td>
+
+
+
                     {% endif %}
-                    <!--<td>{{todo.due_date}}</a></td>-->
+
                     <td><a href="{% url 'update' pk=todo.id %}" class="btn btn-success btn-sm">수정</a></td>
                     <td><a href="{% url 'delete' pk=todo.id %}" class="btn btn-danger btn-sm">삭제</a></td>
+                    {% if todo.success == False %}
+                    <td><a href="{% url 'cross' pk=todo.id %}" class="btn btn-primary btn-sm">완료</a></td>
+                    {% else %}
+                    <td><a href="{% url 'cross' pk=todo.id %}" class="btn btn-primary btn-sm">취소</a></td>
+                    {% endif %}
 
-                    <!--<td id="ss"><input type="button" class="btn btn-primary" value="완료" ></td>-->
+
+
 
                 </tr>
             {% endfor %}
@@ -58,4 +73,36 @@
     </table>
     </br>
 
+{% endblock %}
+
+{% block pagination %}
+  {% if is_paginated %}
+    <ul class="pagination justify-content-center pagination-sm">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+              <a class="page-link" href="{% url 'list' %}?page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
+          </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Previous</a>
+        </li>
+        {% endif %}
+
+        {% for object in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == forloop.counter %}disabled{% endif %}">
+                <a class="page-link" href="{{ request.path }}?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+            </li>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+              <a class="page-link" href="{% url 'list' %}?page={{ page_obj.next_page_number }}">Next</a>
+          </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+  {% endif %}
 {% endblock %}

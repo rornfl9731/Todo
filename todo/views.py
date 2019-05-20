@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,render_to_response,redirect
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
@@ -10,15 +10,15 @@ from .models import Todo
 
 class TodoListView(ListView):
     model = Todo
+    paginate_by = 5
 
-    def get_ordering(self):
-        ordering = self.request.GET.get('ordering', 'priority')
-        # validate ordering here
-        return ordering
+    # def get_ordering(self):
+    #     ordering = self.request.GET.get('ordering', 'priority')
+    #     # validate ordering here
+    #     return ordering
 
-
-
-
+    def get_queryset(self):
+        return Todo.objects.order_by('priority')
 
 
 class TodoCreateView(CreateView):
@@ -41,4 +41,13 @@ class TodoDeleteView(DeleteView):
 
 class TodoDetailView(DetailView):
     model = Todo
+
+
+def cross(request,pk):
+    content = Todo.objects.get(pk=pk)
+    content.success ^= True
+    content.save()
+    return redirect('list')
+
+
 
